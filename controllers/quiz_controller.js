@@ -173,4 +173,67 @@ exports.play = function (req, res, next) {
     });
 };
 
+// GET /quizzes/:quizId/check
+exports.check = function (req, res, next) {
 
+    var answer = req.query.answer || "";
+
+    var result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
+
+    res.render('quizzes/result', {
+        quiz: req.quiz,
+        result: result,
+        answer: answer
+    });
+};
+
+
+exports.randomPlay = function (req, res, next) {
+
+    if(!req.session.preg_acertadas || req.session.score===0) {
+        req.session.preg_acertadas = [];
+        req.session.score=0;
+    }
+
+    models.Quiz.count()
+        .then(function(numero){
+            if(req.session.score === numero){
+                res.render('quizzes/random_nomore',{
+                    score:req.session.score
+                })
+            }
+            var preguntaId = (Math.floor(Math.random()*numero)+1);
+            while(req.session.preg_acertadas.indexOf(preguntaId) != -1 && req.session.score !==numero) {
+                preguntaId = (Math.floor(Math.random()*numero)+1);
+            }
+            req.session.preg_acertadas.push(preguntaId);
+            return models.Quiz.findById(preguntaId);
+        })
+        .then(function(pregunta){
+            res.render('quizzes/random_play', {
+                quiz: pregunta,
+                score: req.session.score
+            });
+        })
+        .catch(function(err){
+            console.log(err);
+        });
+};
+
+
+exports.randomCheck = function(req, res, next){
+    var answer = req.query.answer || "";
+    var respuesta = req.quiz.answer;
+    var result = answer.toLowerCase().trim() === respuesta.toLowerCase().trim();
+    if(result){
+        req.session.score++;
+    }else{
+        req.session.score=0;
+    }
+    res.render('quizzes/random_result', {
+        score: req.session.score,
+        answer: answer,
+        result:result
+    });
+
+}
