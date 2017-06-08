@@ -91,7 +91,7 @@ router.delete('/users/:userId(\\d+)',
     userController.destroy);  // borrar cuenta
 
 router.get('/users/:userId(\\d+)/quizzes', quizController.index);     // ver las preguntas de un usuario
-
+router.get('/users/:userId(\\d+)/tips', tipController.show);     // ver las preguntas de un usuario
 
 
 // Definición de rutas de /quizzes
@@ -132,10 +132,11 @@ router.post('/quizzes/:quizId(\\d+)/tips',
     tipController.create);
 router.put('/quizzes/:quizId(\\d+)/tips/:tipId(\\d+)/accept',
     sessionController.loginRequired,
-    quizController.adminOrAuthorRequired,
+    tipController.adminOrAuthorTipRequired,
     tipController.accept);
 router.delete('/quizzes/:quizId(\\d+)/tips/:tipId(\\d+)',
     sessionController.loginRequired,
+    tipController.adminOrAuthorTipRequired,
     tipController.destroy);
 
 // Pagina de ayuda
@@ -144,7 +145,8 @@ router.get('/ayuda', function(req, res, next) {
 });
 
 
-router.get('/quizzes',                     quizController.index);
+
+/**router.get('/quizzes',                     quizController.index);
 router.get('/quizzes/:quizId(\\d+)',       quizController.show);
 router.get('/quizzes/new',                 quizController.new);
 router.post('/quizzes',                    quizController.create);
@@ -153,7 +155,9 @@ router.put('/quizzes/:quizId(\\d+)',       quizController.update);
 router.delete('/quizzes/:quizId(\\d+)',    quizController.destroy);
 
 router.get('/quizzes/:quizId(\\d+)/play',  quizController.play);
-router.get('/quizzes/:quizId(\\d+)/check', quizController.check);
+router.get('/quizzes/:quizId(\\d+)/check', quizController.check);*/
+
+
 
 
 
